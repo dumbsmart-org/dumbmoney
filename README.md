@@ -40,9 +40,12 @@ You get normalized OHLCV data automatically - no need to care which provider sup
 
 | Market | Example Symbol |
 |------|------|
-| A-share | 600519.SH or 600519 |
-| A-share | 000001.SZ or 000001 |
-| H-share | 0700.HK |
+| SH | 600519.SH or 600519 |
+| SZ | 000001.SZ or 000001 |
+| KCB | 688235.SH or 688235 |
+| ETF_SH | 513090.SH or 513090, 562500.SH or 562500, 588080.SH or 588080 |
+| ETF_SZ | 159652.SZ or 159652 |
+| HK | 0700.HK |
 | US | AAPL.US |
 
 Suffixes for H-shares and US stocks are required. A-share symbols may omit suffixes; however, if they are present, they must be valid and correct.
