@@ -36,7 +36,7 @@ class TushareProvider(BaseProvider):
 
   def supports(self, symbol: str) -> bool:
     _, market = detect_market(symbol)
-    if market in [Market.SH, Market.SZ, Market.KCB, Market.HK]:
+    if market in [Market.SH, Market.SZ, Market.KCB, Market.HK, Market.ETF_SH, Market.ETF_SZ]:
       return True
     return False
 
@@ -64,6 +64,12 @@ class TushareProvider(BaseProvider):
       # Only forward adjusted data is supported in Tushare for HK stocks
       df = self.pro.hk_daily_adj(
         ts_code=f"{code}.HK",
+        start_date=start_str,
+        end_date=end_str,
+      )
+    elif market in [Market.ETF_SH, Market.ETF_SZ]:
+      df = self.pro.fund_daily(
+        ts_code=f"{code}.{market.value.split('_')[-1]}",
         start_date=start_str,
         end_date=end_str,
       )

@@ -10,7 +10,7 @@ async def test_fetch_daily_prices():
     "09688.HK", "06160.HK", # HK stocks
     "600745.SH", "301308.SZ", "603986", "002466", # SH/SZ stocks
     "688235", "688472.SH", # KCB stocks
-    #"159652.SZ", "513090.SH", "159792", "513040", "588080", "562500", # ETF stocks
+    "159652.SZ", "513090.SH", "159792", "513040", "588080", "562500", # ETF stocks
   ]
   
   for symbol in symbols:

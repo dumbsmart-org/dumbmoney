@@ -53,11 +53,8 @@ def detect_market(symbol: str) -> Tuple[str, Market]:
   if re.match(r"^68\d{4}$", code) and suffix in ["SH", ""]:
     return code, Market.KCB
   
-  if re.match(r"^51\d{4}$", code) and suffix in ["SH", ""]:
+  if re.match(r"^5[168]\d{4}$", code) and suffix in ["SH", ""]:
     return code, Market.ETF_SH
-  
-  if re.match(r"^5[68]\d{4}$", code) and suffix in ["SZ", ""]:
-    return code, Market.ETF_SZ
   
   if re.match(r"^15\d{4}$", code) and suffix in ["SZ", ""]:
     return code, Market.ETF_SZ
