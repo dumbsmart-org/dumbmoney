@@ -28,7 +28,7 @@ fig, _ = plot_kline(df, title="AAPL Daily K-Line Chart")
 from matplotlib import pyplot as plt
 plt.show()
 
-ifig = plot_kline(df, backend="plotly", title="AAPL Daily K-Line Chart (Plotly)")
+ifig, = plot_kline(df, backend="plotly", title="AAPL Daily K-Line Chart (Plotly)")
 ifig.show()
 ```
 

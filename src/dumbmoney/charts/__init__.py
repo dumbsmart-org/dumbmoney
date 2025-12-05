@@ -18,7 +18,7 @@ def get_backend(name: str) -> BaseChart:
 
 def plot_kline(
   data: pd.DataFrame,
-  backend: str = "mplfinance",
+  backend: str = "plotly",
   indicators: Optional[Mapping[str, pd.Series]] = None,
   volume: Optional[bool] = None,
   title: Optional[str] = None,
