@@ -6,7 +6,7 @@ from typing import Tuple
 import pandas as pd
 import re
 
-from dumbmoney.types import AdjustType
+from ..types import AdjustType
 
 
 class Market(str, Enum):

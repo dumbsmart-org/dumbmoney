@@ -1,6 +1,6 @@
 [project]
 name = "dumbmoney"
-version = "0.1.1"
+version = "0.2.0"
 description = "Technical analysis and quantitative trading toolkit for retail investors taking on the market"
 readme = "README.md"
 authors = [
@@ -10,15 +10,11 @@ license = "MIT"
 requires-python = ">=3.9"
 dependencies = [
     "akshare>=1.17.91",
-    "pandas>=2.3.3",
-]
-
-[project.optional-dependencies]
-tushare = [
-    "tushare>=1.4.24",
-]
-massive = [
     "massive>=2.0.2",
+    "mplfinance>=0.12.10b0",
+    "pandas>=2.3.3",
+    "plotly>=6.5.0",
+    "tushare>=1.4.24",
 ]
 
 [project.urls]
@@ -36,6 +32,7 @@ dev = [
     "pytest>=8.4.2",
     "pytest-asyncio>=1.2.0",
     "pytest-cov>=7.0.0",
+    "pytest-mpl>=0.18.0",
     "python-dotenv>=1.2.1",
 ]
 

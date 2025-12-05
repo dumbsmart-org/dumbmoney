@@ -1,10 +1,10 @@
 from datetime import date, datetime
-from typing import Iterable, List, Sequence
+from typing import List, Sequence
 
 import pandas as pd
 
-from dumbmoney.providers.base import BaseProvider
-from dumbmoney.types import AdjustType
+from .base import BaseProvider
+from ..types import AdjustType
 
 
 def _normalize_date(d) -> date:

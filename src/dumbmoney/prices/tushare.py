@@ -4,9 +4,9 @@ from typing import Optional
 import os
 import pandas as pd
 
-from dumbmoney.providers.base import BaseProvider, Market, detect_market
-from dumbmoney.types import AdjustType
-from dumbmoney.logger import logger
+from .base import BaseProvider, Market, detect_market
+from ..types import AdjustType
+from ..logger import logger
 
 import tushare as ts
 
