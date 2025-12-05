@@ -117,9 +117,8 @@ Plot k-line (candlestick) chart using the provided `DataFrame` data.
 
 - **Returns**
 
-A tuple `(fig, ax)` where:
+A tuple `(fig, ...)` where the first element is always the figure object:
 
 | Name | Type | Description |
 |------|------|------|
-| `fig` | `matplotlib.figure.Figure` | The matplotlib Figure object for the chart. |
-| `ax`  | `matplotlib.axes.Axes` | The main Axes object for the k-line chart. |
+| `fig` | - | The Figure object for the chart. |
