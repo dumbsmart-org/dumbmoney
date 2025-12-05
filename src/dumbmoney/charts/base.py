@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Mapping, Optional, Any
+from typing import Mapping, Optional, Any, Tuple
 
 import pandas as pd
 
@@ -60,7 +60,7 @@ class BaseChart(ABC):
     volume: Optional[bool] = None,
     title: Optional[str] = None,
     **kwargs
-  ) -> Any:
+  ) -> Tuple[Any, ...]:
     """Plot OHLC data as a K-line (candlestick) chart."""
     ohlc_data = _normalize_ohlc(data)
     
@@ -83,6 +83,6 @@ class BaseChart(ABC):
     volume: bool = True,
     title: Optional[str] = None,
     **kwargs
-  ) -> Any:
+  ) -> Tuple[Any, ...]:
     """Internal method to be implemented by subclasses for plotting."""
     raise NotImplementedError

@@ -23,7 +23,7 @@ class MPLFinanceChart(BaseChart):
     try:
       import mplfinance as mpf
     except ImportError:
-      raise ImportError("mplfinance is not installed. Please install it to use MPLFinanceChart.")
+      raise ImportError("mplfinance is not installed.")
     
     df = ohlc  # type: ignore[assignment]
     
@@ -34,18 +34,18 @@ class MPLFinanceChart(BaseChart):
         ap = mpf.make_addplot(s, panel=0, ylabel=name)
         addplots.append(ap)
         
-    have_volume = volume and "volume" in df.columns
+    has_volume = volume and "volume" in df.columns
     
     mpf_kwargs = {
       "type": "candle",
       "style": self.style,
       "title": title or "Price (K-line) Chart",
-      "volume": have_volume,
+      "volume": has_volume,
       "addplot": addplots if addplots else [],
       "returnfig": True
     }
     mpf_kwargs.update(kwargs)
     
-    fig, axes = mpf.plot(df, **mpf_kwargs)
+    fig, ax = mpf.plot(df, **mpf_kwargs)
     
-    return fig, axes
+    return fig, ax

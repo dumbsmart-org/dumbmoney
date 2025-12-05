@@ -27,6 +27,9 @@ fig, _ = plot_kline(df, title="AAPL Daily K-Line Chart")
 
 from matplotlib import pyplot as plt
 plt.show()
+
+ifig = plot_kline(df, backend="plotly", title="AAPL Daily K-Line Chart (Plotly)")
+ifig.show()
 ```
 
 ## ✨ Features
@@ -106,7 +109,7 @@ Plot k-line (candlestick) chart using the provided `DataFrame` data.
 | Name | Type | Description |
 |------|------|------|
 | `data` | `pandas.DataFrame`| DataFrame containing OHLCV columns (`open`, `high`, `low`, `close`, `volume`) |
-| `backend` | `str` | Charting backend to use. Currently only `"mpl"` (mplfinance) is supported. |
+| `backend` | `str` | Charting backend to use. Currently support `"mpl"` (mplfinance) and `"plotly"` (plotly). |
 | `indicators` | `list` or `None` | List of technical indicators to overlay (for future implementation). Default is `None`. |
 | `volume` | `bool` or `None` | Whether to plot volume below the k-line chart. Default is `None` (auto-detect). |
 | `title` | `str` or `None` | Chart title. Default is `None`. |

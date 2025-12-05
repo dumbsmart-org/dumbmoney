@@ -1,6 +1,6 @@
 import pandas as pd
 
-from typing import Optional, Mapping
+from typing import Optional, Mapping, Tuple, Any
 
 from .base import BaseChart
 from .mplfinance import MPLFinanceChart
@@ -11,6 +11,9 @@ def get_backend(name: str) -> BaseChart:
   name = name.lower()
   if name in ("mpl", "mplfinance"):
     return MPLFinanceChart()
+  if name == "plotly":
+    from .plotly import PlotlyChart
+    return PlotlyChart()
   raise ValueError(f"Unknown chart backend: {name}")
 
 def plot_kline(
@@ -20,7 +23,7 @@ def plot_kline(
   volume: Optional[bool] = None,
   title: Optional[str] = None,
   **kwargs,
-):
+) -> Tuple[Any, ...]:
   """
   Convenience function to plot K-line chart using specified backend.
   """
