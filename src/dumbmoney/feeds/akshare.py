@@ -1,18 +1,21 @@
+from dataclasses import dataclass
 from datetime import date
+from typing import List, Literal, Union, Optional
 
 import pandas as pd
 
-from .base import BaseProvider, Market, detect_market
-from ..types import AdjustType
+from .feed import AdjustType, BaseFeed, StockMarket
+from ..models import OHLCVData, normalize_ohlcv
 from ..logger import logger
 
 import akshare as ak
 
 
-class AkshareProvider(BaseProvider):
-  """Data provider using Akshare."""
-    
-  name = "akshare"
+@dataclass
+class AkshareFeed(BaseFeed):
+  """Data feed backed by Akshare."""
+  
+  name: str = "Akshare"
   
   rename_map = {
     "日期": "date",
@@ -28,25 +31,27 @@ class AkshareProvider(BaseProvider):
     "forward": "qfq",
     "backward": "hfq",
   }
+  
+  @classmethod
+  def markets(cls) -> Union[List[StockMarket], Literal["*"]]:
+    return "*"
 
-  def supports(self, _: str) -> bool:
-    # Akshare supports a wide range of symbols; for simplicity, we assume it supports all.
-    return True
-
-  def fetch_daily_prices(
+  def get_ohlcv(
     self,
     symbol: str,
     start: date,
     end: date,
     adjust: AdjustType = "forward",
-  ) -> pd.DataFrame:
+    fields: Optional[List[str]] = None,
+  ) -> OHLCVData:
+    code, market = self.check_symbol(symbol)
+    
     start_str = start.strftime("%Y%m%d")
     end_str = end.strftime("%Y%m%d")
     
-    code, market = detect_market(symbol)
-    logger.debug(f"Fetching {symbol} ({code}) for market {market.name} from {start_str} to {end_str} with adjust={adjust}")
+    logger.debug(f"Fetching {symbol} from {start_str} to {end_str} with adjust={adjust}")
     
-    if market in [Market.SH, Market.SZ]:
+    if market in [StockMarket.SH, StockMarket.SZ]:
       df = ak.stock_zh_a_hist(
         symbol=code,
         period="daily",
@@ -54,7 +59,7 @@ class AkshareProvider(BaseProvider):
         end_date=end_str,
         adjust=self.adjust_map[adjust],
       )
-    elif market == Market.HK:
+    elif market == StockMarket.HK:
       df = ak.stock_hk_hist(
         symbol=code,
         period="daily",
@@ -62,19 +67,19 @@ class AkshareProvider(BaseProvider):
         end_date=end_str,
         adjust=self.adjust_map[adjust],
       )
-    elif market == Market.KCB:
+    elif market == StockMarket.KCB:
       df = ak.stock_zh_kcb_daily(
         symbol=f"sh{code}",
         adjust=self.adjust_map[adjust],
       )
-    elif market in [Market.ETF_SH, Market.ETF_SZ]:
+    elif market in [StockMarket.ETF_SH, StockMarket.ETF_SZ]:
       df = ak.fund_etf_hist_em(
         symbol=code,
         start_date=start_str,
         end_date=end_str,
         adjust=self.adjust_map[adjust],
       )
-    elif market == Market.US:
+    elif market == StockMarket.US:
       df = ak.stock_us_hist(
         symbol=code,
         period="daily",
@@ -82,8 +87,6 @@ class AkshareProvider(BaseProvider):
         end_date=end_str,
         adjust=self.adjust_map[adjust],
       )
-    else:
-      raise ValueError(f"Can't recognize market for symbol: {symbol}")
     
     df = df.rename(columns=self.rename_map)
     df["date"] = pd.to_datetime(df["date"])
@@ -91,7 +94,4 @@ class AkshareProvider(BaseProvider):
     # filter df by date range
     df = df[(df["date"] >= pd.to_datetime(start)) & (df["date"] <= pd.to_datetime(end))]
     
-    df = df.set_index("date").sort_index()
-    
-    result = df[["open", "high", "low", "close", "volume"]].copy()
-    return pd.DataFrame(result)
+    return normalize_ohlcv(pd.DataFrame(df), fields=fields)

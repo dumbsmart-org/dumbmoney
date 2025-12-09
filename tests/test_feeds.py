@@ -1,10 +1,11 @@
-from dumbmoney import fetch_daily_prices
-
 import pandas as pd
 import pytest, asyncio
 
+from dumbmoney import get_ohlcv
+
+
 @pytest.mark.asyncio
-async def test_fetch_daily_prices():
+async def test_get_ohlcv():
   symbols = [
     "ZLAB.US", "BRK.A.US", # US stocks
     "09688.HK", "06160.HK", # HK stocks
@@ -14,7 +15,7 @@ async def test_fetch_daily_prices():
   ]
   
   for symbol in symbols:
-    df = fetch_daily_prices(symbol=symbol)
+    df = get_ohlcv(symbol=symbol, fields=[])
     assert not df.empty, f"DataFrame is empty for symbol: {symbol}"
     assert "close" in df.columns, f"'close' column missing for symbol: {symbol}"
     assert df.index.name == "date", f"Index name is not 'date' for symbol: {symbol}"

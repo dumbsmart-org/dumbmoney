@@ -2,11 +2,7 @@ from typing import Any, Mapping, Optional, List
 
 import pandas as pd
 
-from .base import BaseChart, OHLCData
-
-
-UP_COLOR = "#26a69a"  # Green for up days
-DOWN_COLOR = "#ef5350"  # Red for down days
+from .base import BaseChart, OHLCVData, UP_COLOR, DOWN_COLOR
 
 
 def infer_offdays_from_index(idx: pd.DatetimeIndex) -> List[pd.Timestamp]:
@@ -26,7 +22,7 @@ class PlotlyChart(BaseChart):
   
   def _plot_kline(
     self,
-    ohlc: OHLCData,
+    ohlcv: OHLCVData,
     indicators: Optional[Mapping[str, pd.Series]] = None,
     volume: bool = True,
     title: Optional[str] = None,
@@ -39,7 +35,7 @@ class PlotlyChart(BaseChart):
     except ImportError:
       raise ImportError("plotly is not installed.")
     
-    df = ohlc  # type: ignore[assignment]
+    df = ohlcv  # type: ignore[assignment]
     idx = df.index
         
     has_volume = volume and "volume" in df.columns

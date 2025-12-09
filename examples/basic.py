@@ -1,15 +1,39 @@
 from dotenv import load_dotenv
 load_dotenv()
 
-from dumbmoney import fetch_daily_prices, plot_kline
+from dumbmoney import get_ohlcv, plot
 
-df = fetch_daily_prices("AAPL.US", start="2025-06-01")
-print(df.tail(3))
+ohlcv = get_ohlcv("AAPL.US", fields=[])
+print(ohlcv.tail(5))
 
-fig, _ = plot_kline(df, backend="mpl", title="AAPL Daily K-Line Chart")
+from dumbmoney.indicators import MovingAverage, MACD, RSI
 
-from matplotlib import pyplot as plt
-plt.show()
+ma20 = MovingAverage(name="MA20", window=20, ma_type="SMA")
+ma20.compute(ohlcv)
+print(ma20.values.tail(5))
 
-ifig, = plot_kline(df, backend="plotly", title="AAPL Daily K-Line Chart")
-ifig.show()
+ma5 = MovingAverage(name="MA5", window=5, ma_type="SMA")
+ma5.compute(ohlcv)
+
+ma60 = MovingAverage(name="MA60", window=60, ma_type="SMA")
+ma60.compute(ohlcv)
+
+vol_ma20 = MovingAverage(name="Vol_MA20", window=20, ma_type="SMA", input_col="volume")
+vol_ma20.compute(ohlcv)
+print(vol_ma20.values.tail(5))
+
+macd = MACD()
+macd.compute(ohlcv)
+print(macd.values.tail(5))
+
+rsi = RSI()
+rsi.compute(ohlcv)
+print(rsi.values.tail(5))
+
+plot(
+  ohlcv,
+  indicators=[ma5, ma20, ma60, vol_ma20, macd, rsi],
+  panels=[0, 0, 0, 1, 2, 3],
+  title="AAPL Stock Price with Indicators",
+  backend="plotly"
+)

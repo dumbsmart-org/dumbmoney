@@ -1,8 +1,7 @@
-from .prices import fetch_daily_prices
-from .charts import plot_kline
-
+from .feeds import get_ohlcv
+from .plotting import plot
 
 __all__ = [
-  "fetch_daily_prices",
-  "plot_kline",
+  "get_ohlcv",
+  "plot",
 ]

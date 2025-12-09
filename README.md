@@ -20,15 +20,15 @@ from dumbmoney import fetch_daily_prices, plot_kline
 os.environ["TUSHARE_TOKEN"] = "xxxxxx"
 os.environ["MASSIVE_KEY"] = "yyyyyy"
 
-df = fetch_daily_prices("AAPL.US", "2025-06-01")
-print(df.tail())
+quotes = fetch_daily_prices("AAPL.US")
+print(quotes.tail())
 
-fig, _ = plot_kline(df, title="AAPL Daily K-Line Chart")
+fig = plot_kline(quotes, backend="mpl", title="AAPL Daily K-Line Chart")[0]
 
 from matplotlib import pyplot as plt
 plt.show()
 
-ifig, = plot_kline(df, backend="plotly", title="AAPL Daily K-Line Chart (Plotly)")
+ifig = plot_kline(quotes, title="AAPL Daily K-Line Chart (Plotly)")[0]
 ifig.show()
 ```
 
@@ -109,7 +109,7 @@ Plot k-line (candlestick) chart using the provided `DataFrame` data.
 | Name | Type | Description |
 |------|------|------|
 | `data` | `pandas.DataFrame`| DataFrame containing OHLCV columns (`open`, `high`, `low`, `close`, `volume`) |
-| `backend` | `str` | Charting backend to use. Currently support `"mpl"` (mplfinance) and `"plotly"` (plotly). |
+| `backend` | `str` | Charting backend to use. Currently support `"mpl"` (mplfinance) and `"plotly"` (plotly, default).|
 | `indicators` | `list` or `None` | List of technical indicators to overlay (for future implementation). Default is `None`. |
 | `volume` | `bool` or `None` | Whether to plot volume below the k-line chart. Default is `None` (auto-detect). |
 | `title` | `str` or `None` | Chart title. Default is `None`. |

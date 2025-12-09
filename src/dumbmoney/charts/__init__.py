@@ -3,13 +3,13 @@ import pandas as pd
 from typing import Optional, Mapping, Tuple, Any
 
 from .base import BaseChart
-from .mplfinance import MPLFinanceChart
 
 
 def get_backend(name: str) -> BaseChart:
   """Get chart backend by name."""
   name = name.lower()
   if name in ("mpl", "mplfinance"):
+    from .mplfinance import MPLFinanceChart
     return MPLFinanceChart()
   if name == "plotly":
     from .plotly import PlotlyChart

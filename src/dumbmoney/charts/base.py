@@ -3,48 +3,11 @@ from typing import Mapping, Optional, Any, Tuple
 
 import pandas as pd
 
+from ..models import OHLCVData, normalize_ohlcv
 
-_REQUIRED_COLS = ("open", "high", "low", "close", "volume")
 
-
-class OHLCData(pd.DataFrame):
-  """
-  Thin wrapper around pd.DataFrame to represent OHLC data.
-  Ensures required columns are present and a DatetimeIndex is used.
-  """
-  # this is just for type readability - no extra functionality
-  pass
-
-    
-def _normalize_ohlc(data: pd.DataFrame) -> OHLCData:
-  """Ensure DataFrame has required OHLC columns and a DatetimeIndex."""
-  df = data.copy()
-  df.columns = [col.lower() for col in df.columns]
-  
-  # Ensure required columns are present
-  missing_cols = [col for col in _REQUIRED_COLS if col not in df.columns]
-  if missing_cols:
-    raise ValueError(f"DataFrame is missing required columns: {missing_cols}")
-    
-  # Promote 'date' column to index if present
-  if not isinstance(df.index, pd.DatetimeIndex):
-    for col in df.columns:
-      if col.lower() in ("date", "datetime", "trade_date"):
-        df[col] = pd.to_datetime(df[col])
-        df = df.set_index(col)
-        break
-    
-  if not isinstance(df.index, pd.DatetimeIndex):
-    raise ValueError("DataFrame must have a DatetimeIndex or a 'date'/'datetime'/'trade_date' column.")
-  
-  df = df.sort_index()
-  
-  # Enforce column order
-  cols = [col for col in _REQUIRED_COLS if col in df.columns]
-  other_cols = [col for col in df.columns if col not in cols]
-  df = df[cols + other_cols]
-  
-  return df # type: ignore[return-value]
+UP_COLOR = "#26a69a"  # Green for up days
+DOWN_COLOR = "#ef5350"  # Red for down days
   
   
 class BaseChart(ABC):
@@ -62,7 +25,7 @@ class BaseChart(ABC):
     **kwargs
   ) -> Tuple[Any, ...]:
     """Plot OHLC data as a K-line (candlestick) chart."""
-    ohlc_data = _normalize_ohlc(data)
+    ohlc_data = normalize_ohlcv(data)
     
     if volume is None:
       volume = self.default_volume
@@ -78,7 +41,7 @@ class BaseChart(ABC):
   @abstractmethod
   def _plot_kline(
     self,
-    ohlc: OHLCData,
+    ohlc: OHLCVData,
     indicators: Optional[Mapping[str, pd.Series]] = None,
     volume: bool = True,
     title: Optional[str] = None,

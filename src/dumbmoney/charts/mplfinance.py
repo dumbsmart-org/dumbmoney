@@ -2,7 +2,7 @@ from typing import Any, Mapping, Optional
 
 import pandas as pd
 
-from .base import BaseChart, OHLCData
+from .base import BaseChart, OHLCVData
 
 
 class MPLFinanceChart(BaseChart):
@@ -14,7 +14,7 @@ class MPLFinanceChart(BaseChart):
   
   def _plot_kline(
     self,
-    ohlc: OHLCData,
+    ohlcv: OHLCVData,
     indicators: Optional[Mapping[str, pd.Series]] = None,
     volume: bool = True,
     title: Optional[str] = None,
@@ -25,7 +25,7 @@ class MPLFinanceChart(BaseChart):
     except ImportError:
       raise ImportError("mplfinance is not installed.")
     
-    df = ohlc  # type: ignore[assignment]
+    df = ohlcv  # type: ignore[assignment]
     
     addplots = []
     if indicators:
