@@ -15,26 +15,46 @@ pip install dumbmoney
 ## 🚀 Quick Start
 
 ```python
-from dumbmoney import fetch_daily_prices, plot_kline
+from dumbmoney import get_ohlcv, plot
 
 os.environ["TUSHARE_TOKEN"] = "xxxxxx"
 os.environ["MASSIVE_KEY"] = "yyyyyy"
 
-quotes = fetch_daily_prices("AAPL.US")
-print(quotes.tail())
+ohlcv = get_ohlcv("AAPL.US")
+print(ohlcv.tail())
 
-fig = plot_kline(quotes, backend="mpl", title="AAPL Daily K-Line Chart")[0]
+from dumbmoney.indicators import MovingAverage, MACD, RSI
 
-from matplotlib import pyplot as plt
-plt.show()
+ma5 = MovingAverage(name="MA5", window=5, ma_type="SMA")
+ma5.compute(ohlcv)
 
-ifig = plot_kline(quotes, title="AAPL Daily K-Line Chart (Plotly)")[0]
-ifig.show()
+ma20 = MovingAverage(name="MA20", window=20, ma_type="SMA")
+ma20.compute(ohlcv)
+
+ma60 = MovingAverage(name="MA60", window=60, ma_type="SMA")
+ma60.compute(ohlcv)
+
+vol_ma20 = MovingAverage(name="Vol_MA20", window=20, ma_type="SMA", input_col="volume")
+vol_ma20.compute(ohlcv)
+
+macd = MACD()
+macd.compute(ohlcv)
+
+rsi = RSI()
+rsi.compute(ohlcv)
+
+plot(
+  ohlcv,
+  indicators=[ma5, ma20, ma60, vol_ma20, macd, rsi],
+  panels=[0, 0, 0, 1, 2, 3],
+  title="AAPL Stock Price with Indicators (mplfinance)",
+  backend="mpl", # available backends: "mpl", "plotly"
+)
 ```
 
 ## ✨ Features
 
-- 🔌 One function to fetch prices: fetch_daily_prices(symbol, start, end)
+- 🔌 One function to fetch ohlcv data: get_ohlcv(symbol, start, end)
 - 🌏 Multiple markets supported
   - A-shares (.SH, .SZ)
   - H-shares (.HK)
@@ -73,7 +93,7 @@ Suffixes for H-shares and US stocks are required. A-share symbols may omit suffi
 
 ## 📘 API Reference
 
-### `fetch_daily_prices(symbol, start, end, adjust="none")`
+### `get_ohlcv(symbol, start, end, adjust="none")`
 
 Fetch normalized daily OHLCV prices.
 
@@ -100,25 +120,21 @@ A `pandas.DataFrame` with:
 
 Index is a `DatetimeIndex` named `date`.
 
-### `plot_kline(data, backend="mpl", indicators=None, volume=None, title=None, **kwargs)`
+### `plot(ohlcv, indicators=None, panels=None, title=None, backend="mpl", **kwargs)`
 
-Plot k-line (candlestick) chart using the provided `DataFrame` data.
+Plot chart using the provided ohlcv data.
 
 - **Parameters**
 
 | Name | Type | Description |
 |------|------|------|
-| `data` | `pandas.DataFrame`| DataFrame containing OHLCV columns (`open`, `high`, `low`, `close`, `volume`) |
-| `backend` | `str` | Charting backend to use. Currently support `"mpl"` (mplfinance) and `"plotly"` (plotly, default).|
-| `indicators` | `list` or `None` | List of technical indicators to overlay (for future implementation). Default is `None`. |
-| `volume` | `bool` or `None` | Whether to plot volume below the k-line chart. Default is `None` (auto-detect). |
+| `ohlcv` | `pandas.DataFrame`| DataFrame containing OHLCV columns (`open`, `high`, `low`, `close`, `volume`) |
+| `indicators` | `list` or `None` | List of technical indicators to plot. Default is `None`. |
+| `panels` | `list` or `None` | List of panel where the indicators will be plotted on. The ohlcv data will be plotted on the first two panels. |
 | `title` | `str` or `None` | Chart title. Default is `None`. |
+| `backend` | `str` | Plotting backend to use. Currently support `"mpl"` (mplfinance, default) and `"plotly"` (plotly).|
 | `**kwargs` | - | Additional keyword arguments passed to the plotting backend. |
 
 - **Returns**
 
-A tuple `(fig, ...)` where the first element is always the figure object:
-
-| Name | Type | Description |
-|------|------|------|
-| `fig` | - | The Figure object for the chart. |
+The plotter object which you can used to get the figure object by `plotter.fig`.
