@@ -1,6 +1,6 @@
 [project]
 name = "dumbmoney"
-version = "0.2.2"
+version = "0.2.3"
 description = "Technical analysis and quantitative trading toolkit for retail investors taking on the market"
 readme = "README.md"
 authors = [
