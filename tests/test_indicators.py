@@ -3,10 +3,7 @@ import pytest
 from dumbmoney import get_ohlcv
 from dumbmoney.indicators import MovingAverage, MACD, RSI
 
-# Get sample OHLCV data for testing
-@pytest.fixture
-def ohlcv_data():
-  return get_ohlcv("AAPL.US", "2025-01-01", "2025-06-30")
+from tests import ohlcv_data
 
 def test_moving_average(ohlcv_data):
   window = 20

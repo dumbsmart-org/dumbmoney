@@ -34,6 +34,14 @@ plot(
   ohlcv,
   indicators=[ma5, ma20, ma60, vol_ma20, macd, rsi],
   panels=[0, 0, 0, 1, 2, 3],
-  title="AAPL Stock Price with Indicators",
+  title="AAPL Stock Price with Indicators (mplfinance)",
+  backend="mpl"
+)
+
+plot(
+  ohlcv,
+  indicators=[ma5, ma20, ma60, vol_ma20, macd, rsi],
+  panels=[0, 0, 0, 1, 2, 3],
+  title="AAPL Stock Price with Indicators (Plotly)",
   backend="plotly"
 )

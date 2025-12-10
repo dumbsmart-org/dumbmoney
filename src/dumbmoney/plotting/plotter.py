@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from enum import Enum
 from functools import singledispatch
-from typing import Any, List, Mapping, Optional, Union
+from typing import Any, List, Mapping, Optional, Sequence, Union
 
 import pandas as pd
 
@@ -122,8 +122,8 @@ class Plotter(ABC):
   def plot(
     self,
     ohlcv: OHLCVData,
-    title: Union[str, None] = None,
-    indicators: Optional[List[Indicator]] = None,
+    title: Optional[str] = None,
+    indicators: Optional[Sequence[Indicator]] = None,
     panels: Optional[List[int]] = None,
     palette: Optional[List[Color]] = None,
     **kwargs

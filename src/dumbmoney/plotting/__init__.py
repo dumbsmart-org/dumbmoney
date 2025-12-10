@@ -1,21 +1,22 @@
-from typing import List, Literal
+from typing import List, Literal, Optional, Sequence
 
 from ..models import OHLCVData
 from ..indicators import Indicator
 from . import adapters # Ensure adapters are registered
-
+from .plotter import Plotter
 
 PlotterBackend = Literal["mpl", "plotly"]
 
 
 def plot(
   ohlcv: OHLCVData,
-  indicators: List[Indicator],
-  title: str = "",
+  title: Optional[str] = None,
+  indicators: Optional[Sequence[Indicator]] = None,
+  panels: Optional[List[int]] = None,
   backend: PlotterBackend = "mpl",
   show: bool = True,
   **kwargs
-) -> None:
+) -> Plotter:
   """Plot OHLCV data with indicators using the specified backend."""
   
   if backend == "mpl":
@@ -31,8 +32,11 @@ def plot(
   
   plotter.plot(
     ohlcv,
-    indicators=indicators,
     title=title,
+    indicators=indicators,
+    panels=panels,
     show=show,
     **kwargs
   )
+  
+  return plotter

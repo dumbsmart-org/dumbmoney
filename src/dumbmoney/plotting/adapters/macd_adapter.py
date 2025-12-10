@@ -48,24 +48,22 @@ def macd_to_seriesplots(
     color=ctx.palette[2] if ctx.palette else Color.GRAY,
   )
   
+  # Set secondary_y parameter
+  hist_plot.params["secondary_y"] = False
+  dif_plot.params["secondary_y"] = True
+  dea_plot.params["secondary_y"] = True
+  
   if ctx.backend == "mpl":
-    # Set secondary_y parameter
-    hist_plot.params["secondary_y"] = False
-    dif_plot.params["secondary_y"] = True
-    dea_plot.params["secondary_y"] = True
-    
     # Fill between parameters for histogram
     hist = df[df.columns[2]]
     fb_positive = dict(y1=hist.values, y2=0, where=hist > 0, color=Color.GREEN, alpha=0.6, interpolate=True, panel=ctx.panel)
     fb_negative = dict(y1=hist.values, y2=0, where=hist < 0, color=Color.RED, alpha=0.6, interpolate=True, panel=ctx.panel)
     hist_plot.params["fill_between"] = [fb_positive, fb_negative]
     object.__setattr__(hist_plot, 'color', Color.WHITE)  # Override color for better visibility
+  elif ctx.backend == "plotly":
+    # Extra parameters for plotly
+    hist_plot.params["marker_color"] = [Color.GREEN.value if v >=0 else Color.RED.value for v in hist_plot.series.values]
     
-    # Arrange so that histogram is plotted first (at the bottom)
-    series_plots.append(hist_plot)
-    series_plots.append(dif_plot)
-    series_plots.append(dea_plot)
-  else:
-    series_plots.extend([dif_plot, dea_plot, hist_plot])
+  series_plots.extend([hist_plot, dif_plot, dea_plot])
 
   return series_plots

@@ -35,10 +35,20 @@ class PlotlyPlotter(Plotter):
     from plotly.subplots import make_subplots
     
     panels = max((p.panel for p in series_plots), default=0) + 1
+    
+    # Set normalized row heights
     row_heights = [0.7, 0.3] + [0.2] * (panels - 2) if panels > 1 else [1.0]
-    # Normalize row heights
     total = sum(row_heights)
     row_heights = [h / total for h in row_heights]
+    
+    # Set subplot specs
+    specs = [[{}] for _ in range(panels)]
+    for i, sp in enumerate(series_plots):
+      if specs[sp.panel][0].get("secondary_y") is not None:
+        continue
+      secondary_y = sp.params.get("secondary_y", None)
+      if secondary_y is not None:
+        specs[sp.panel][0]["secondary_y"] = True
     
     fig = make_subplots(
       rows=panels,
@@ -46,6 +56,7 @@ class PlotlyPlotter(Plotter):
       shared_xaxes=True,
       vertical_spacing=0.01,
       row_heights=row_heights,
+      specs=specs,
     )
     
     # Add OHLCV data
@@ -93,16 +104,23 @@ class PlotlyPlotter(Plotter):
     
     # Add series plots
     for p in series_plots:
+      trace_extras = {
+        "secondary_y": p.params.get("secondary_y", None),
+      }
+      # Remove None values
+      trace_extras = {k: v for k, v in trace_extras.items() if v is not None}
+      
       if p.type == ChartType.BAR:
         fig.add_trace(
           go.Bar(
             x=p.series.index,
             y=p.series.values,
             name=p.label,
-            marker_color=p.color.value,
+            marker_color=p.params.get("marker_color", p.color.value),
           ),
           row=p.panel + 1,
           col=1,
+          **trace_extras,
         )
       else:
         fig.add_trace(
@@ -115,6 +133,7 @@ class PlotlyPlotter(Plotter):
           ),
           row=p.panel + 1,
           col=1,
+          **trace_extras,
         )
     
     fig.update_layout(
