@@ -137,4 +137,4 @@ Plot chart using the provided ohlcv data.
 
 - **Returns**
 
-The plotter object which you can used to get the figure object by `plotter.fig`.
+The plotter object which can be used to get the figure object by `plotter.fig`.
