@@ -2,7 +2,7 @@ from dataclasses import dataclass, field
 from typing import List, Union
 
 from .plotter import *
-from ..models import OHLCVData
+from ..core import OHLCVData
 from ..indicators import *
 
 

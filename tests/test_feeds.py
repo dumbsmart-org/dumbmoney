@@ -1,7 +1,9 @@
+import os
 import pandas as pd
 import pytest, asyncio
 
-from dumbmoney import get_ohlcv
+from dumbmoney import get_ohlcv, load_ohlcv_from_csv, export_ohlcv_to_csv
+from tests import OUTPUT_DIR
 
 
 @pytest.mark.asyncio
@@ -25,6 +27,12 @@ async def test_get_ohlcv():
     print(f"Fetched {len(df)} rows for symbol: {symbol}")
     print(df.tail(3))
     print("...")
+    # export to CSV
+    csv_path = os.path.join(OUTPUT_DIR, f"{symbol.replace('.', '_')}.csv")
+    export_ohlcv_to_csv(df, csv_path)
+    # load from CSV
+    df_loaded = load_ohlcv_from_csv(csv_path)
+    pd.testing.assert_frame_equal(df, df_loaded)
     # rate limit
     print("waiting for 1 second to respect rate limits...")
     await asyncio.sleep(1)

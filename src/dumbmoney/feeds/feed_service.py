@@ -2,7 +2,7 @@ from datetime import date, datetime
 from typing import List, Sequence, Optional
 
 from .feed import AdjustType, BaseFeed
-from ..models import OHLCVData
+from ..core import OHLCVData
 
 
 def _normalize_date(d) -> date:

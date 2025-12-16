@@ -14,6 +14,8 @@ pip install dumbmoney
 
 ## 🚀 Quick Start
 
+### OHLCV Data & Charts
+
 ```python
 from dumbmoney import get_ohlcv, plot
 
@@ -50,6 +52,22 @@ plot(
   title="AAPL Stock Price with Indicators (mplfinance)",
   backend="mpl", # available backends: "mpl", "plotly"
 )
+```
+
+### Strategy, Policy & Backtest
+
+```python
+from dumbmoney import get_ohlcv
+from dumbmoney.strategies import MACrossParams, MACrossStrategy
+from dumbmoney.policies import LongFlatAllInConfig, LongFlatAllInPolicy
+from dumbmoney.backtests.single_asset import SingleAssetBacktester
+
+ohlcv = get_ohlcv("AAPL.US")
+strategy = MACrossStrategy(MACrossParams(fast_window=20, slow_window=60))
+policy = LongFlatAllInPolicy(LongFlatAllInConfig(max_long_pct=1.0, min_strength=0.5))
+backtester = SingleAssetBacktester(initial_cash=100_000.0)
+result = backtester.run(symbol="AAPL", ohlcv=ohlcv, strategy=strategy, policy=policy)
+print(result.metrics)
 ```
 
 ## ✨ Features

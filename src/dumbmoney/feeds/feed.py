@@ -6,7 +6,7 @@ from typing import List, Literal, Optional, Tuple, Union
 
 import re
 
-from ..models import OHLCVData
+from ..core import OHLCVData
 
 
 AdjustType = Literal["none", "forward", "backward"]

@@ -1,6 +1,6 @@
 import pytest
 
-from dumbmoney import get_ohlcv, plot
+from dumbmoney import plot
 from dumbmoney.indicators import *
 
 from tests import ohlcv_data

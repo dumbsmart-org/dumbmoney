@@ -4,7 +4,7 @@ from typing import List, Dict, Any, Optional
 
 import pandas as pd
 
-from ..models import OHLCVData
+from ..core import OHLCVData
 
 
 @dataclass(frozen=True)

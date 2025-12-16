@@ -1,10 +1,10 @@
 from dataclasses import dataclass
-from typing import List, Union
+from typing import Union
 
 import pandas as pd
 
 from .indicator import Indicator
-from ..models import OHLCVData
+from ..core import OHLCVData
 
 
 @dataclass(frozen=True)

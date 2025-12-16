@@ -1,6 +1,6 @@
 from typing import List, Literal, Optional, Sequence
 
-from ..models import OHLCVData
+from ..core import OHLCVData
 from ..indicators import Indicator
 from . import adapters # Ensure adapters are registered
 from .plotter import Plotter

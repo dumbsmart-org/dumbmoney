@@ -1,6 +1,3 @@
-import pytest
-
-from dumbmoney import get_ohlcv
 from dumbmoney.indicators import MovingAverage, MACD, RSI
 
 from tests import ohlcv_data

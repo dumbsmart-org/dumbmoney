@@ -7,7 +7,7 @@ import os
 import pandas as pd
 
 from .feed import AdjustType, BaseFeed, StockMarket
-from ..models import OHLCVData, normalize_ohlcv
+from ..core import OHLCVData, normalize_ohlcv
 from ..logger import logger
 
 import tushare as ts

@@ -1,10 +1,13 @@
 from datetime import date
 from functools import lru_cache
+from pathlib import Path
 from typing import Optional, Any, List
+
+import pandas as pd
 
 from .feed import AdjustType, BaseFeed
 from .feed_service import DataFeedService
-from ..models import OHLCVData
+from ..core import OHLCVData, normalize_ohlcv
 
 
 @lru_cache(maxsize=1)
@@ -47,3 +50,21 @@ def get_ohlcv(
     adjust=adjust,
     fields=fields,
   )
+
+
+def load_ohlcv_from_csv(
+  filepath: str,
+) -> OHLCVData:
+  if not Path(filepath).is_file():
+    raise FileNotFoundError(f"CSV file not found: {filepath}")
+  
+  df = pd.read_csv(filepath, parse_dates=["date"], index_col="date")
+  ohlcv = normalize_ohlcv(df, fields=[])
+  return ohlcv
+
+
+def export_ohlcv_to_csv(
+  ohlcv: OHLCVData,
+  filepath: str,
+) -> None:
+  ohlcv.to_csv(filepath, index=True)

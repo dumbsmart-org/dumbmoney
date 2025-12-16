@@ -6,7 +6,7 @@ from typing import Any, List, Mapping, Optional, Sequence, Union
 
 import pandas as pd
 
-from ..models import OHLCVData
+from ..core import OHLCVData
 from ..indicators import Indicator
 
 
