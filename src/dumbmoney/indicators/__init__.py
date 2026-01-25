@@ -4,8 +4,8 @@ from .macd import MACD
 from .rsi import RSI
 
 __all__ = [
-  "Indicator",
-  "MovingAverage",
-  "MACD",
-  "RSI",
+    "Indicator",
+    "MovingAverage",
+    "MACD",
+    "RSI",
 ]

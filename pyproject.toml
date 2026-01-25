@@ -1,6 +1,6 @@
 [project]
 name = "dumbmoney"
-version = "0.3.0"
+version = "0.3.1"
 description = "Technical analysis and quantitative trading toolkit for retail investors taking on the market"
 readme = "README.md"
 authors = [
@@ -22,6 +22,11 @@ Homepage = "https://github.com/dumbsmart-org/dumbmoney"
 Repository = "https://github.com/dumbsmart-org/dumbmoney.git"
 Issues = "https://github.com/dumbsmart-org/dumbmoney/issues"
 
+[project.optional-dependencies]
+tiger = [
+    "tigeropen>=3.5.2",
+]
+
 [build-system]
 requires = ["uv_build>=0.9.13,<0.10.0"]
 build-backend = "uv_build"
@@ -34,6 +39,7 @@ dev = [
     "pytest-cov>=7.0.0",
     "pytest-mpl>=0.18.0",
     "python-dotenv>=1.2.1",
+    "ruff>=0.14.14",
 ]
 
 [[tool.uv.index]]

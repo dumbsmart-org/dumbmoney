@@ -12,6 +12,12 @@ Install only the core:
 pip install dumbmoney
 ```
 
+Install Tiger package:
+
+```bash
+pip install "dumbmoney[tiger]"
+```
+
 ## 🚀 Quick Start
 
 ### OHLCV Data & Charts

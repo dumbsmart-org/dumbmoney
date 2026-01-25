@@ -1,12 +1,14 @@
 from dotenv import load_dotenv
+from dumbmoney import get_ohlcv, plot
+from dumbmoney.indicators import MovingAverage, MACD, RSI
+
+
 load_dotenv()
 
-from dumbmoney import get_ohlcv, plot
 
 ohlcv = get_ohlcv("HSAI.US", fields=[])
 print(ohlcv.tail(5))
 
-from dumbmoney.indicators import MovingAverage, MACD, RSI
 
 ma20 = MovingAverage(name="MA20", window=20, ma_type="SMA")
 ma20.compute(ohlcv)
@@ -30,18 +32,18 @@ rsi = RSI()
 rsi.compute(ohlcv)
 print(rsi.values.tail(5))
 
-#plot(
+# plot(
 #  ohlcv,
 #  indicators=[ma5, ma20, ma60, vol_ma20, macd, rsi],
 #  panels=[0, 0, 0, 1, 2, 3],
 #  title="AAPL Stock Price with Indicators (mplfinance)",
 #  backend="mpl", # available backends: "mpl", "plotly"
-#)
+# )
 
 plot(
-  ohlcv,
-  indicators=[ma5, ma20, ma60, vol_ma20, macd, rsi],
-  panels=[0, 0, 0, 1, 2, 3],
-  title="AAPL Stock Price with Indicators (Plotly)",
-  backend="plotly"
+    ohlcv,
+    indicators=[ma5, ma20, ma60, vol_ma20, macd, rsi],
+    panels=[0, 0, 0, 1, 2, 3],
+    title="AAPL Stock Price with Indicators (Plotly)",
+    backend="plotly",
 )

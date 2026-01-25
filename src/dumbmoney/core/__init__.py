@@ -4,14 +4,14 @@ from .portfolio import SingleAssetPortfolioState, Order, Trade, Side
 from .results import BacktestMetrics, BacktestResult
 
 __all__ = [
-  "OHLCVData",
-  "normalize_ohlcv",
-  "SignalFrame",
-  "SignalType",
-  "SingleAssetPortfolioState",
-  "Order",
-  "Trade",
-  "Side",
-  "BacktestMetrics",
-  "BacktestResult",
+    "OHLCVData",
+    "normalize_ohlcv",
+    "SignalFrame",
+    "SignalType",
+    "SingleAssetPortfolioState",
+    "Order",
+    "Trade",
+    "Side",
+    "BacktestMetrics",
+    "BacktestResult",
 ]
