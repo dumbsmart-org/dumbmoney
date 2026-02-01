@@ -4,6 +4,8 @@ from typing import List, Literal, Union, Optional
 
 import pandas as pd
 
+from dumbmoney.core import StockDetails
+
 from .feed import AdjustType, BaseFeed, StockMarket
 from ..core import OHLCVData, normalize_ohlcv
 from ..logger import logger
@@ -99,3 +101,7 @@ class AkshareFeed(BaseFeed):
         ]
 
         return normalize_ohlcv(pd.DataFrame(df), fields=fields)
+
+    def get_stock_details(self, symbol: str) -> Union[StockDetails, None]:
+        # Not implemented yet
+        return None

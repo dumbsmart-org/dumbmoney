@@ -5,7 +5,12 @@ import pytest
 
 from datetime import date
 
-from dumbmoney import get_ohlcv, load_ohlcv_from_csv, export_ohlcv_to_csv
+from dumbmoney import (
+    get_ohlcv,
+    load_ohlcv_from_csv,
+    export_ohlcv_to_csv,
+    get_stock_details,
+)
 from tests import OUTPUT_DIR
 
 
@@ -84,3 +89,23 @@ def test_tiger_client():
     print(ohlcv_data.head())
     print("...")
     print(ohlcv_data.tail())
+
+
+@pytest.mark.asyncio
+async def test_get_stock_details():
+    for symbol in symbols:
+        details = get_stock_details(symbol)
+        assert details is not None, f"Failed to fetch stock details for {symbol}"
+        assert details.symbol == symbol.rsplit(".", 1)[0], (
+            f"Symbol mismatch: expected {symbol}, got {details.symbol}"
+        )
+        assert details.name, f"Name is empty for {symbol}"
+        if details.exchange:
+            assert details.exchange in ["NASDAQ", "NYSE", "SZSE", "SSE", "HKEX"], (
+                f"Unexpected exchange {details.exchange} for {symbol}"
+            )
+
+        print(f"Fetched details for {symbol}: {details}")
+        # rate limit
+        print("waiting for 6 seconds to respect rate limits...")
+        await asyncio.sleep(6)

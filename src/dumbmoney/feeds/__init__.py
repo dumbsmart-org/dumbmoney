@@ -1,13 +1,13 @@
 from datetime import date
 from functools import lru_cache
 from pathlib import Path
-from typing import Optional, Any, List
+from typing import Optional, Any, List, Union
 
 import pandas as pd
 
 from .feed import AdjustType, BaseFeed
 from .feed_service import DataFeedService
-from ..core import OHLCVData, normalize_ohlcv
+from ..core import OHLCVData, normalize_ohlcv, StockDetails
 
 
 @lru_cache(maxsize=1)
@@ -83,3 +83,10 @@ def export_ohlcv_to_csv(
     filepath: str,
 ) -> None:
     ohlcv.to_csv(filepath, index=True)
+
+
+def get_stock_details(
+    symbol: str,
+) -> Union[StockDetails, None]:
+    service = default_feed_service()
+    return service.get_stock_details(symbol=symbol)

@@ -1,8 +1,10 @@
 # dumbmoney
 
-**dumbmoney** is a technical analysis and quantitative trading toolkit designed for retail investors. The current version provides a unified, transparent interface to fetch daily stock prices across A-shares, H-shares, and US markets by abstracting popular data packages like `massive`, `tushare`, and `akshare`, hiding their implementation complexity.
+**dumbmoney** is a technical analysis and quantitative trading toolkit designed for retail investors. The current version provides a unified, transparent interface to fetch daily stock prices across A-shares, H-shares, and US markets by abstracting popular data packages like `massive`, `tushare`, `akshare`, and `tigeropen` (optional), hiding their implementation complexity.
 
 *To use the `massive` or `tushare` providers, you must set the required environment variables `MASSIVE_KEY` or `TUSHARE_TOKEN`.*
+
+*`tigeropen` is an optional provider. To use `tigeropen`, you must set the required environment varialbes `TIGER_ID`, `TIGER_ACCOUNT`, `TIGER_LICENSE` and `TIGER_PRIVATE_KEY`. Please refer to [Tiger's GitHub repo](https://github.com/tigerfintech/openapi-python-sdk) for more details.*
 
 ## 📦 Installation
 
@@ -12,13 +14,29 @@ Install only the core:
 pip install dumbmoney
 ```
 
-Install Tiger package:
+Install extra `tigeropen` package:
 
 ```bash
 pip install "dumbmoney[tiger]"
 ```
 
 ## 🚀 Quick Start
+
+### Stock Details
+
+```python
+from dumbmoney import get_stock_details
+
+os.environ["TIGER_ID"] = "xxxxxx"
+os.environ["TIGER_ACCOUNT"] = "yyyyyy"
+os.environ["TIGER_LICENSE"] = "xxxxxx"
+os.environ["TIGER_PRIVATE_KEY"] = "yyyyyy"
+os.environ["TUSHARE_TOKEN"] = "xxxxxx"
+os.environ["MASSIVE_KEY"] = "yyyyyy"
+
+details = get_stock_details('AAPL.US')
+print(details)
+```
 
 ### OHLCV Data & Charts
 
@@ -84,9 +102,9 @@ print(result.metrics)
   - H-shares (.HK)
   - US stocks (.US)
 - ⚙️ Automatic provider routing
-  - A-shares → TuShare → AkShare
-  - H-shares → TuShare → AkShare
-  - US stocks → Massive → AkShare
+  - A-shares: TigerOpen → TuShare → AkShare
+  - H-shares: TigerOpen → TuShare → AkShare
+  - US stocks: TigerOpen → Massive → AkShare
 - 📐 Unified normalized output
   - open, high, low, close, volume
 - 🔁 Fallback logic
@@ -104,7 +122,7 @@ print(result.metrics)
 `dumbmoney` uses suffix-based symbol conventions:
 
 | Market | Example Symbol |
-|------|------|
+| ------ | ------ |
 | SH | 600519.SH or 600519 |
 | SZ | 000001.SZ or 000001 |
 | KCB | 688235.SH or 688235 |
@@ -124,18 +142,18 @@ Fetch normalized daily OHLCV prices.
 - **Parameters**
 
 | Name | Type | Description |
-|------|------|------|
+| ------ | ------ | ------ |
 | `symbol` | `str` | Stock symbol with suffix (600519.SH, 0700.HK, AAPL.US) |
 | `start` | `str` | Start time, e.g. "2025-01-01" |
 | `end` | `str` | End time, e.g. "2025-12-01" |
-| `adjust` | `str` | Adjustment mode, "none" \| "forward" \| "backward" |
+| `adjust` | `str` | Adjustment mode, "none" \| "forward" \| "backward", default is "forward" |
 
 - **Returns**
 
 A `pandas.DataFrame` with:
 
 | Column | Description |
-|------|------|
+| ------ | ------ |
 | `open` | Opening price |
 | `high` | High |
 | `low` | Low |
@@ -151,12 +169,12 @@ Plot chart using the provided ohlcv data.
 - **Parameters**
 
 | Name | Type | Description |
-|------|------|------|
-| `ohlcv` | `pandas.DataFrame`| DataFrame containing OHLCV columns (`open`, `high`, `low`, `close`, `volume`) |
+| ------ | ------ | ------ |
+| `ohlcv` | `pandas.DataFrame` | DataFrame containing OHLCV columns (`open`, `high`, `low`, `close`, `volume`) |
 | `indicators` | `list` or `None` | List of technical indicators to plot. Default is `None`. |
 | `panels` | `list` or `None` | List of panel where the indicators will be plotted on. The ohlcv data will be plotted on the first two panels. |
 | `title` | `str` or `None` | Chart title. Default is `None`. |
-| `backend` | `str` | Plotting backend to use. Currently support `"mpl"` (mplfinance, default) and `"plotly"` (plotly).|
+| `backend` | `str` | Plotting backend to use. Currently support `"mpl"` (mplfinance, default) and `"plotly"` (plotly). |
 | `**kwargs` | - | Additional keyword arguments passed to the plotting backend. |
 
 - **Returns**

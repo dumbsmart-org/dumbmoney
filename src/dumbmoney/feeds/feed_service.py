@@ -1,8 +1,9 @@
 from datetime import date, datetime
-from typing import List, Sequence, Optional
+from typing import List, Sequence, Optional, Union
 
 from .feed import AdjustType, BaseFeed
-from ..core import OHLCVData
+from ..core import OHLCVData, StockDetails
+from ..logger import logger
 
 
 def _normalize_date(d) -> date:
@@ -50,6 +51,34 @@ class DataFeedService:
                 errors.append(f"Feed {feed.name} failed: {e}")
 
         raise RuntimeError(
-            f"All feeds failed for symbol: {symbol} "
+            f"get_ohlcv: all feeds failed for symbol: {symbol} "
             f"({start_date} → {end_date}): {'; '.join(errors)}"
         )
+
+    def get_stock_details(
+        self,
+        symbol: str,
+    ) -> Union[StockDetails, None]:
+        errors: List[str] = []
+
+        details: Union[StockDetails, None] = None
+
+        for feed in self.feeds:
+            try:
+                new_details = feed.get_stock_details(
+                    symbol=symbol,
+                )
+                if new_details is not None:
+                    if details is None:
+                        details = new_details
+                    else:
+                        details = details | new_details
+            except Exception as e:
+                errors.append(f"Feed {feed.name} failed: {e}")
+
+        if errors:
+            logger.warning(
+                f"get_stock_details: symbol: {symbol}, errors: {'; '.join(errors)}"
+            )
+
+        return details

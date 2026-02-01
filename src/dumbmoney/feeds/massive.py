@@ -6,11 +6,14 @@ from typing import List, Optional, Literal, Union
 import os
 import pandas as pd
 
+from dumbmoney.core import StockDetails
+
 from .feed import AdjustType, BaseFeed, StockMarket
 from ..core import OHLCVData, normalize_ohlcv
 from ..logger import logger
 
 from massive import RESTClient
+from massive.rest.models.tickers import TickerDetails
 
 
 @lru_cache(maxsize=1, typed=True)
@@ -79,3 +82,39 @@ class MassiveFeed(BaseFeed):
         ]
 
         return normalize_ohlcv(pd.DataFrame(df), fields=fields)
+
+    def get_stock_details(self, symbol: str) -> Union[StockDetails, None]:
+        try:
+            code, market = self.check_symbol(symbol)
+        except Exception:
+            return None
+
+        if market not in [StockMarket.US]:
+            return None
+
+        logger.debug(f"Massive: fetching stock details for {symbol}")
+
+        details = self.massive_client.get_ticker_details(code)
+
+        if not isinstance(details, TickerDetails):
+            return None
+
+        listing_date = (
+            datetime.strptime(details.list_date, "%Y-%m-%d").date()
+            if details.list_date
+            else None
+        )
+
+        return StockDetails(
+            symbol=code,
+            name=details.name or "",
+            market="US",
+            exchange="NYSE"
+            if details.primary_exchange == "XNYS"
+            else ("NASDAQ" if details.primary_exchange == "XNAS" else None),
+            listing_date=listing_date,
+            total_shares=details.share_class_shares_outstanding or None,
+            float_shares=None,
+            is_etf=details.type == "ETF",
+            tags=[details.sic_description.strip()] if details.sic_description else [],
+        )

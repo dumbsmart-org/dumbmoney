@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from datetime import date
+from datetime import date, datetime
 from functools import lru_cache
 from typing import List, Optional, Literal, Union
 
@@ -7,7 +7,7 @@ import os
 import pandas as pd
 
 from .feed import AdjustType, BaseFeed, StockMarket
-from ..core import OHLCVData, normalize_ohlcv
+from ..core import OHLCVData, StockDetails, normalize_ohlcv
 from ..logger import logger
 
 import tushare as ts
@@ -106,3 +106,45 @@ class TushareFeed(BaseFeed):
         ]
 
         return normalize_ohlcv(pd.DataFrame(df), fields=fields)
+
+    def get_stock_details(self, symbol: str) -> Union[StockDetails, None]:
+        try:
+            code, market = self.check_symbol(symbol)
+        except Exception:
+            return None
+
+        if market in [StockMarket.HK, StockMarket.US, StockMarket.UNKNOWN]:
+            return None
+
+        logger.debug(f"Tushare: fetching stock details for {symbol}")
+
+        df = None
+
+        if market in [StockMarket.SH, StockMarket.SZ, StockMarket.KCB]:
+            df = self.pro.stock_basic(
+                ts_code=f"{code}.{market.value.split('_')[-1]}",
+                fields="name,industry,exchange,list_date",
+            )
+
+        if df is None or df.empty:
+            return None
+
+        listing_date = (
+            datetime.strptime(df.iloc[0]["list_date"], "%Y%m%d").date()
+            if "list_date" in df.columns and pd.notna(df.iloc[0]["list_date"])
+            else None
+        )
+
+        return StockDetails(
+            symbol=code,
+            name=df.iloc[0]["name"],
+            market="CN",
+            exchange=df.iloc[0]["exchange"],
+            listing_date=listing_date,
+            total_shares=None,
+            float_shares=None,
+            is_etf=False,
+            tags=[df.iloc[0]["industry"].strip()]
+            if pd.notna(df.iloc[0]["industry"])
+            else [],
+        )

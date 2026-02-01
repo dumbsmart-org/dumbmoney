@@ -9,12 +9,13 @@ from tigeropen.common.consts import (
     Language,
     BarPeriod,
     QuoteRight,
+    Market,
 )
 from tigeropen.tiger_open_config import TigerOpenClientConfig
 from tigeropen.quote.quote_client import QuoteClient
 
 from .feed import AdjustType, BaseFeed, StockMarket
-from ..core import OHLCVData, normalize_ohlcv
+from ..core import OHLCVData, StockDetails, normalize_ohlcv
 from ..logger import logger
 
 
@@ -122,3 +123,58 @@ class TigerFeed(BaseFeed):
             )
 
         return normalize_ohlcv(pd.DataFrame(df), fields=fields)
+
+    def get_stock_details(self, symbol: str) -> Union[StockDetails, None]:
+        try:
+            code, market = self.check_symbol(symbol)
+        except Exception:
+            return None
+
+        if market in [StockMarket.US, StockMarket.UNKNOWN]:
+            return None
+
+        lang = "zh_CN"
+
+        logger.debug(f"Tiger: fetching stock details for {symbol}")
+
+        details = self.tiger_client.get_stock_details([code], lang=lang)
+
+        if details is None:
+            return None
+
+        dict_details = details.to_dict(orient="records")[0]
+
+        listing_date = dict_details.get("listing_date")
+        if listing_date is not None:
+            listing_date = date.fromtimestamp(listing_date / 1000.0)
+
+        stock_industries = self.tiger_client.get_stock_industry(
+            code, market=Market.CN if market != StockMarket.HK else Market.HK
+        )
+
+        tags = (
+            []
+            if stock_industries is None
+            else [ind.get("name_cn") for ind in stock_industries]
+            + [ind.get("name_en") for ind in stock_industries]
+        )
+
+        tags = list(set([tag.strip() for tag in tags if tag]))
+
+        return StockDetails(
+            symbol=code,
+            name=dict_details.get("name", ""),
+            market="HK" if market == StockMarket.HK else "CN",
+            exchange="SSE"
+            if market in [StockMarket.SH, StockMarket.ETF_SH, StockMarket.KCB]
+            else (
+                "SZSE"
+                if market in [StockMarket.SZ, StockMarket.ETF_SZ]
+                else ("HKEX" if market == StockMarket.HK else None)
+            ),
+            listing_date=listing_date,
+            total_shares=dict_details.get("shares"),
+            float_shares=dict_details.get("float_shares"),
+            is_etf=dict_details.get("etf", 0) != 0,
+            tags=tags,
+        )

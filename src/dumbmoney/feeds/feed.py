@@ -6,7 +6,7 @@ from typing import List, Literal, Optional, Tuple, Union
 
 import re
 
-from ..core import OHLCVData
+from ..core import OHLCVData, StockDetails
 
 
 AdjustType = Literal["none", "forward", "backward"]
@@ -114,5 +114,15 @@ class BaseFeed(ABC):
 
         Expected columns at least: ['open', 'high', 'low', 'close', 'volume']
         but may include more (e.g., 'vwap', 'turnover', etc.)
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def get_stock_details(
+        self,
+        symbol: str,
+    ) -> Union[StockDetails, None]:
+        """
+        Return stock details for a given symbol.
         """
         raise NotImplementedError

@@ -2,6 +2,7 @@ from .data import OHLCVData, normalize_ohlcv
 from .signals import SignalFrame, SignalType
 from .portfolio import SingleAssetPortfolioState, Order, Trade, Side
 from .results import BacktestMetrics, BacktestResult
+from .stock import StockDetails
 
 __all__ = [
     "OHLCVData",
@@ -14,4 +15,5 @@ __all__ = [
     "Side",
     "BacktestMetrics",
     "BacktestResult",
+    "StockDetails",
 ]
